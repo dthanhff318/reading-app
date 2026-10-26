@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Link, useParams } from 'react-router-dom';
 import MeaningSheet from '../components/MeaningSheet';
 import MeaningTooltip from '../components/MeaningTooltip';
+import ReadingQuiz from '../components/ReadingQuiz';
 import {
   createAnnotation,
   deleteAnnotation,
@@ -206,7 +207,10 @@ export default function ReaderPage() {
           </span>
         )}
         {annotations.length} saved {annotations.length === 1 ? 'meaning' : 'meanings'} · Select text
-        to add a meaning
+        to add a meaning ·{' '}
+        <a href="#reading-test" className="reader-quiz-link">
+          Take the reading test ↓
+        </a>
       </p>
 
       <article
@@ -243,6 +247,8 @@ export default function ReaderPage() {
           </p>
         ))}
       </article>
+
+      <ReadingQuiz key={article.id} article={article} />
 
       {annotations.length > 0 && (
         <section className="vocab">

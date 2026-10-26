@@ -43,6 +43,18 @@ export interface ExtractedArticle {
 
 export type StoryLevel = 'B2' | 'C1' | 'C2';
 
+export type QuizSize = 5 | 10;
+
+/** One multiple-choice question from the generate-quiz Edge Function (Gemini). */
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  /** Index into `options` of the correct answer. */
+  answerIndex: number;
+  /** Why the answer is right, in Vietnamese. */
+  explanation: string;
+}
+
 /** A short story written by the generate-story Edge Function. */
 export interface GeneratedStory {
   title: string;

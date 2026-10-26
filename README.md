@@ -43,6 +43,23 @@ Built with React + TypeScript (Vite) and Supabase.
   paragraph into plain / highlighted segments.
 - Overlapping meanings are not supported: selecting inside an existing one opens
   it for editing; a selection that partially overlaps one is rejected.
+- **Reading test**: at the end of each article, Gemini writes 5 or 10
+  multiple-choice questions (main idea, detail, inference, vocabulary in context)
+  through the `generate-quiz` Edge Function, with explanations in Vietnamese.
+  Options are reshuffled server-side so the right answer is not always in the
+  same position. Quizzes are not stored; each one is generated on demand.
+
+## Edge Functions
+
+All functions live in `supabase/functions/` and are deployed with `verify_jwt`
+off. The Gemini ones share the `GEMINI_API_KEY` secret.
+
+| Function | Purpose | Optional model secret |
+| --- | --- | --- |
+| `lookup-word` | Meaning + IPA for a selected word | `GEMINI_MODEL` |
+| `generate-story` | Original story by level and topic | `GEMINI_STORY_MODEL` |
+| `generate-quiz` | Multiple-choice reading test for an article | `GEMINI_QUIZ_MODEL` |
+| `extract-article` | Title and text from a web page | n/a |
 
 ## Notes
 

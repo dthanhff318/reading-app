@@ -7,6 +7,8 @@ import type {
   GeneratedStory,
   MeaningInput,
   NewAnnotation,
+  QuizQuestion,
+  QuizSize,
   StoryLevel,
   WordLookup,
 } from './types';
@@ -85,6 +87,19 @@ export function generateStory(
     { level, topic, prompt },
     'Could not write a story right now. Try again in a moment.',
   );
+}
+
+/** Asks the generate-quiz Edge Function (Gemini) for a multiple-choice reading test. */
+export async function generateQuiz(
+  article: Pick<Article, 'title' | 'content'>,
+  count: QuizSize,
+): Promise<QuizQuestion[]> {
+  const { questions } = await invokeFunction<{ questions: QuizQuestion[] }>(
+    'generate-quiz',
+    { title: article.title, content: article.content, count },
+    'Could not write questions right now. Try again in a moment.',
+  );
+  return questions;
 }
 
 export async function deleteArticle(id: string): Promise<void> {
