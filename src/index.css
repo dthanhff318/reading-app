@@ -732,6 +732,16 @@ textarea:focus {
   margin-top: 16px;
 }
 
+/* Nested inside .chip span, so reset the pill styling it would inherit */
+.chip .chip-hint {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .quiz-start .suggest-status,
 .quiz-start .form-error {
   margin: 0;

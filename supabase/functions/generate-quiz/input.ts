@@ -11,6 +11,9 @@ export class QuizError extends Error {
 export const QUESTION_COUNTS = [5, 10] as const;
 export type QuestionCount = (typeof QUESTION_COUNTS)[number];
 
+export const DIFFICULTIES = ['standard', 'hard'] as const;
+export type Difficulty = (typeof DIFFICULTIES)[number];
+
 // About 3,000 words: plenty for a reading test while keeping the Gemini request cheap.
 export const MAX_CONTENT_LENGTH = 18_000;
 const MAX_TITLE_LENGTH = 300;
@@ -20,6 +23,7 @@ export interface QuizInput {
   title: string;
   content: string;
   count: QuestionCount;
+  difficulty: Difficulty;
 }
 
 export interface QuizQuestion {
@@ -44,10 +48,11 @@ export function shuffle<T>(items: T[]): T[] {
 
 /** Validates the request body: the article title and text plus how many questions to write. */
 export function parseQuizInput(body: unknown): QuizInput {
-  const { title, content, count } = (body ?? {}) as {
+  const { title, content, count, difficulty } = (body ?? {}) as {
     title?: unknown;
     content?: unknown;
     count?: unknown;
+    difficulty?: unknown;
   };
 
   if (typeof content !== 'string' || !content.trim()) {
@@ -59,11 +64,17 @@ export function parseQuizInput(body: unknown): QuizInput {
     throw new QuizError(`Choose ${QUESTION_COUNTS.join(' or ')} questions.`);
   }
 
+  const cleanDifficulty = difficulty ?? 'hard';
+  if (!DIFFICULTIES.includes(cleanDifficulty as Difficulty)) {
+    throw new QuizError(`Choose a difficulty: ${DIFFICULTIES.join(' or ')}.`);
+  }
+
   return {
     title: typeof title === 'string' ? squash(title).slice(0, MAX_TITLE_LENGTH) : '',
     // Long articles are cut rather than rejected; the quiz then covers the opening part.
     content: content.trim().slice(0, MAX_CONTENT_LENGTH),
     count: cleanCount as QuestionCount,
+    difficulty: cleanDifficulty as Difficulty,
   };
 }
 

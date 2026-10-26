@@ -13,12 +13,22 @@ const question = (overrides: Record<string, unknown> = {}) => ({
 const noShuffle = <T>(items: T[]) => items;
 
 describe('parseQuizInput', () => {
-  it('accepts a title, content and a question count', () => {
-    expect(parseQuizInput({ title: ' The  Voyage ', content: 'Some text.', count: 10 })).toEqual({
+  it('accepts a title, content, a question count and a difficulty', () => {
+    expect(
+      parseQuizInput({ title: ' The  Voyage ', content: 'Some text.', count: 10, difficulty: 'standard' }),
+    ).toEqual({
       title: 'The Voyage',
       content: 'Some text.',
       count: 10,
+      difficulty: 'standard',
     });
+  });
+
+  it('defaults to hard questions and rejects an unknown difficulty', () => {
+    expect(parseQuizInput({ title: 'T', content: 'Text.' }).difficulty).toBe('hard');
+    expect(() => parseQuizInput({ title: 'T', content: 'Text.', difficulty: 'insane' })).toThrow(
+      /standard or hard/,
+    );
   });
 
   it('defaults to 5 questions and rejects other counts', () => {

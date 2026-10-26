@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { generateQuiz } from '../lib/api';
 import { scoreQuiz, type QuizAnswers } from '../lib/quiz';
-import type { Article, QuizQuestion, QuizSize } from '../lib/types';
+import type { Article, QuizDifficulty, QuizQuestion, QuizSize } from '../lib/types';
 
 type QuizState =
   | { status: 'idle' }
@@ -10,6 +10,10 @@ type QuizState =
   | { status: 'ready'; questions: QuizQuestion[] };
 
 const SIZES: QuizSize[] = [5, 10];
+const DIFFICULTIES: { value: QuizDifficulty; label: string; hint: string }[] = [
+  { value: 'standard', label: 'Standard', hint: '~IELTS 6' },
+  { value: 'hard', label: 'Hard', hint: '~IELTS 7.5+' },
+];
 const LETTERS = ['A', 'B', 'C', 'D'];
 
 function scoreMessage(correct: number, total: number) {
@@ -23,6 +27,7 @@ function scoreMessage(correct: number, total: number) {
 /** Gemini-written multiple-choice reading test for one article. */
 export default function ReadingQuiz({ article }: { article: Article }) {
   const [size, setSize] = useState<QuizSize>(5);
+  const [difficulty, setDifficulty] = useState<QuizDifficulty>('hard');
   const [quiz, setQuiz] = useState<QuizState>({ status: 'idle' });
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [submitted, setSubmitted] = useState(false);
@@ -45,7 +50,7 @@ export default function ReadingQuiz({ article }: { article: Article }) {
     setAnswers({});
     setSubmitted(false);
     try {
-      const questions = await generateQuiz(article, size);
+      const questions = await generateQuiz(article, size, difficulty);
       if (mounted.current) setQuiz({ status: 'ready', questions });
     } catch (err) {
       if (!mounted.current) return;
@@ -95,6 +100,22 @@ export default function ReadingQuiz({ article }: { article: Article }) {
               </label>
             ))}
           </div>
+          <div className="chips" role="radiogroup" aria-label="Difficulty">
+            {DIFFICULTIES.map((d) => (
+              <label key={d.value} className="chip">
+                <input
+                  type="radio"
+                  name="quiz-difficulty"
+                  checked={difficulty === d.value}
+                  disabled={quiz.status === 'loading'}
+                  onChange={() => setDifficulty(d.value)}
+                />
+                <span>
+                  <strong>{d.label}</strong> <span className="chip-hint">{d.hint}</span>
+                </span>
+              </label>
+            ))}
+          </div>
           <button
             type="button"
             className="btn btn-primary"
@@ -106,7 +127,8 @@ export default function ReadingQuiz({ article }: { article: Article }) {
           <div aria-live="polite">
             {quiz.status === 'loading' && (
               <p className="suggest-status is-loading">
-                Gemini is reading the text and writing {size} questions…
+                Gemini is reading the text and writing {size}{' '}
+                {difficulty === 'hard' ? 'hard ' : ''}questions…
               </p>
             )}
             {quiz.status === 'error' && <p className="form-error">{quiz.message}</p>}

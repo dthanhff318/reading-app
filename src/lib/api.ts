@@ -7,6 +7,7 @@ import type {
   GeneratedStory,
   MeaningInput,
   NewAnnotation,
+  QuizDifficulty,
   QuizQuestion,
   QuizSize,
   StoryLevel,
@@ -93,10 +94,11 @@ export function generateStory(
 export async function generateQuiz(
   article: Pick<Article, 'title' | 'content'>,
   count: QuizSize,
+  difficulty: QuizDifficulty,
 ): Promise<QuizQuestion[]> {
   const { questions } = await invokeFunction<{ questions: QuizQuestion[] }>(
     'generate-quiz',
-    { title: article.title, content: article.content, count },
+    { title: article.title, content: article.content, count, difficulty },
     'Could not write questions right now. Try again in a moment.',
   );
   return questions;

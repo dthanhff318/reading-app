@@ -44,8 +44,10 @@ Built with React + TypeScript (Vite) and Supabase.
 - Overlapping meanings are not supported: selecting inside an existing one opens
   it for editing; a selection that partially overlaps one is rejected.
 - **Reading test**: at the end of each article, Gemini writes 5 or 10
-  multiple-choice questions (main idea, detail, inference, vocabulary in context)
-  through the `generate-quiz` Edge Function, with explanations in Vietnamese.
+  IELTS-style multiple-choice questions (inference, attitude, purpose, reference,
+  vocabulary in context) through the `generate-quiz` Edge Function, with
+  explanations in Vietnamese. *Standard* uses the lite model; *Hard* (default)
+  uses a stronger model with more reasoning so the wrong options stay close.
   Options are reshuffled server-side so the right answer is not always in the
   same position. Quizzes are not stored; each one is generated on demand.
 
@@ -58,7 +60,7 @@ off. The Gemini ones share the `GEMINI_API_KEY` secret.
 | --- | --- | --- |
 | `lookup-word` | Meaning + IPA for a selected word | `GEMINI_MODEL` |
 | `generate-story` | Original story by level and topic | `GEMINI_STORY_MODEL` |
-| `generate-quiz` | Multiple-choice reading test for an article | `GEMINI_QUIZ_MODEL` |
+| `generate-quiz` | Multiple-choice reading test for an article | `GEMINI_QUIZ_MODEL` (standard), `GEMINI_QUIZ_HARD_MODEL` (hard) |
 | `extract-article` | Title and text from a web page | n/a |
 
 ## Notes

@@ -44,6 +44,7 @@ export interface ExtractedArticle {
 export type StoryLevel = 'B2' | 'C1' | 'C2';
 
 export type QuizSize = 5 | 10;
+export type QuizDifficulty = 'standard' | 'hard';
 
 /** One multiple-choice question from the generate-quiz Edge Function (Gemini). */
 export interface QuizQuestion {
