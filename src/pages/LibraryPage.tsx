@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ConfirmDialog from '../components/ConfirmDialog';
 import LibraryHero from '../components/LibraryHero';
 import { deleteArticle, listArticles } from '../lib/api';
 import type { Article } from '../lib/types';
@@ -9,6 +10,9 @@ const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 export default function LibraryPage() {
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Article | null>(null);
+  // Stable so ConfirmDialog's keydown effect doesn't re-run every render
+  const closeDelete = useCallback(() => setPendingDelete(null), []);
 
   useEffect(() => {
     listArticles()
@@ -16,14 +20,10 @@ export default function LibraryPage() {
       .catch((err: Error) => setError(err.message));
   }, []);
 
+  // Errors are thrown back to ConfirmDialog, which shows them inside the dialog
   async function handleDelete(article: Article) {
-    if (!window.confirm(`Delete "${article.title}" and all its saved meanings?`)) return;
-    try {
-      await deleteArticle(article.id);
-      setArticles((list) => list?.filter((a) => a.id !== article.id) ?? null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not delete the article');
-    }
+    await deleteArticle(article.id);
+    setArticles((list) => list?.filter((a) => a.id !== article.id) ?? null);
   }
 
   return (
@@ -57,13 +57,28 @@ export default function LibraryPage() {
               type="button"
               className="icon-btn"
               aria-label={`Delete ${a.title}`}
-              onClick={() => handleDelete(a)}
+              onClick={() => setPendingDelete(a)}
             >
               ✕
             </button>
           </li>
         ))}
       </ul>
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this article?"
+          confirmLabel="Delete"
+          busyLabel="Deleting…"
+          onConfirm={() => handleDelete(pendingDelete)}
+          onClose={closeDelete}
+        >
+          <p className="confirm-quote">{pendingDelete.title}</p>
+          <p className="muted">
+            This also removes every meaning you saved in it. You can&apos;t undo this.
+          </p>
+        </ConfirmDialog>
+      )}
     </div>
   );
 }

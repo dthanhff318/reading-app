@@ -223,6 +223,15 @@ code {
   border-color: var(--border);
 }
 
+.btn-danger {
+  background: var(--danger);
+  color: var(--accent-text);
+}
+
+.btn-danger:not(:disabled):hover {
+  background: color-mix(in srgb, var(--danger) 85%, #000);
+}
+
 .btn-danger-ghost {
   background: transparent;
   color: var(--danger);
@@ -807,6 +816,69 @@ textarea:focus {
   gap: 8px;
 }
 
+/* Confirm dialog */
+.confirm {
+  max-width: 400px;
+  align-items: center;
+  text-align: center;
+  padding: 28px 24px 24px;
+  animation: pop 0.15s ease-out;
+}
+
+.confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--danger) 5%, transparent);
+  color: var(--danger);
+}
+
+.confirm-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.confirm-body {
+  width: 100%;
+}
+
+.confirm-body p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.confirm-body .confirm-quote {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: 1rem;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.confirm-actions {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
 /* Toast */
 .toast {
   position: fixed;
@@ -1010,7 +1082,7 @@ textarea:focus {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: url('/temple-sketch.jpg') center 10% / cover no-repeat;
+  background: url('/temple-gate-sketch.jpg') center 10% / cover no-repeat;
   mix-blend-mode: multiply;
   opacity: 0.22;
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 75%);
