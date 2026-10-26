@@ -70,6 +70,24 @@ code {
   color: var(--muted);
 }
 
+/* Ink-sketch backdrop: multiply turns the white paper into the page's cream tone */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('/temple-sketch.jpg') center 15% / cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.14;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 95%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 95%);
+  transition: opacity 0.3s ease;
+}
+
+.backdrop.is-dim {
+  opacity: 0.05;
+}
+
 /* Layout */
 .topbar {
   position: sticky;
@@ -420,6 +438,22 @@ textarea:focus {
     radial-gradient(circle at 85% 20%, rgba(214, 166, 72, 0.22), transparent 55%),
     linear-gradient(135deg, #efe2c8, var(--surface));
   overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Sketch shows through on the art side and fades out behind the text */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/temple-sketch.jpg') right 30% / 60% auto no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+  /* Starts past the image's left edge (40%) so no hard seam shows */
+  -webkit-mask-image: linear-gradient(to right, transparent 42%, #000 85%);
+  mask-image: linear-gradient(to right, transparent 42%, #000 85%);
 }
 
 .hero-text h1 {
@@ -954,11 +988,6 @@ textarea:focus {
 
 /* Welcome screen */
 .welcome {
-  --welcome-bg: #111110;
-  --welcome-ink: #f4f2ec;
-  --welcome-muted: #a19e95;
-  --welcome-mint: #7ef0b4;
-
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -966,10 +995,26 @@ textarea:focus {
   justify-content: center;
   padding: max(24px, env(safe-area-inset-top)) var(--gutter) max(24px, env(safe-area-inset-bottom));
   background:
-    radial-gradient(circle at 50% 30%, rgba(126, 240, 180, 0.08), transparent 55%),
-    var(--welcome-bg);
-  color: var(--welcome-ink);
+    radial-gradient(ellipse at 75% 30%, rgba(214, 166, 72, 0.18), transparent 60%),
+    var(--bg);
+  color: var(--text);
   text-align: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Temple sketch fills the top on mobile and fades down behind the copy */
+.welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/temple-sketch.jpg') center 10% / cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.22;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 75%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 30%, transparent 75%);
 }
 
 .welcome-inner {
@@ -980,11 +1025,20 @@ textarea:focus {
   align-items: center;
 }
 
+.welcome-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .welcome-art {
   position: relative;
   width: min(100%, 340px);
   aspect-ratio: 1 / 1.05;
   margin-bottom: 8px;
+  color: var(--text);
+  /* Cream halo separates the doodles from the busy sketch behind them */
+  background: radial-gradient(circle at 50% 50%, var(--bg) 45%, transparent 70%);
 }
 
 .doodle {
@@ -1015,6 +1069,7 @@ textarea:focus {
   top: 58%;
   left: 46%;
   width: 34%;
+  color: var(--accent);
   animation-delay: -4.5s;
 }
 
@@ -1030,7 +1085,7 @@ textarea:focus {
 
 .welcome-title {
   font-family: var(--font-read);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(1.8rem, 7vw, 2.4rem);
   line-height: 1.2;
   margin: 0 0 16px;
@@ -1038,7 +1093,7 @@ textarea:focus {
 
 .welcome-text {
   font-family: var(--font-read);
-  color: var(--welcome-muted);
+  color: var(--muted);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0 0 40px;
@@ -1052,7 +1107,7 @@ textarea:focus {
   padding: 8px 4px;
   border: 0;
   background: none;
-  color: var(--welcome-mint);
+  color: var(--accent);
   font-family: var(--font-read);
   font-size: 1.15rem;
   font-weight: 600;
@@ -1062,7 +1117,7 @@ textarea:focus {
 }
 
 .welcome-go:focus-visible {
-  outline: 2px solid var(--welcome-mint);
+  outline: 2px solid var(--accent);
   outline-offset: 6px;
   border-radius: 6px;
 }
@@ -1087,6 +1142,53 @@ textarea:focus {
 @keyframes squiggle-draw {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+/* Desktop: copy on the left, doodles on the right over the full sketch */
+@media (min-width: 900px) {
+  .welcome {
+    text-align: left;
+    padding-inline: 48px;
+  }
+
+  .welcome::before {
+    background-position: right 20%;
+    background-size: 62% auto;
+    opacity: 0.34;
+    /* Starts past the image's left edge (38%) so no hard seam shows */
+    -webkit-mask-image: linear-gradient(to right, transparent 40%, #000 72%);
+    mask-image: linear-gradient(to right, transparent 40%, #000 72%);
+  }
+
+  .welcome-inner {
+    max-width: 1080px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .welcome-copy {
+    align-items: flex-start;
+  }
+
+  .welcome-art {
+    order: 2;
+    width: min(100%, 440px);
+    justify-self: center;
+    margin-bottom: 0;
+    background: none;
+  }
+
+  .welcome-title {
+    font-size: clamp(2.6rem, 4.4vw, 3.6rem);
+    margin-bottom: 20px;
+  }
+
+  .welcome-text {
+    font-size: 1.15rem;
+    max-width: 40ch;
   }
 }
 

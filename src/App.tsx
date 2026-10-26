@@ -12,6 +12,8 @@ function Shell() {
 
   return (
     <>
+      {/* Faded temple sketch behind every page; dimmer while reading to keep text crisp */}
+      <div className={reading ? 'backdrop is-dim' : 'backdrop'} aria-hidden="true" />
       <header className="topbar">
         <Link to="/" className="brand">
           Reading Room

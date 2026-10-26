@@ -85,7 +85,7 @@ function SquiggleArrow() {
   );
 }
 
-/** First-run welcome screen. Dark and full-bleed, outside the usual app shell. */
+/** First-run welcome screen. Full-bleed, outside the usual app shell. */
 export default function WelcomePage() {
   const navigate = useNavigate();
 
@@ -104,16 +104,19 @@ export default function WelcomePage() {
           <QuillBubble />
         </div>
 
-        <h1 className="welcome-title">Welcome to your reading room</h1>
-        <p className="welcome-text">
-          Read real English articles, tap any word to save its meaning and pronunciation, and
-          build your own vocabulary right in the text.
-        </p>
+        <div className="welcome-copy">
+          <p className="hero-eyebrow">Reading Room</p>
+          <h1 className="welcome-title">Welcome to your reading room</h1>
+          <p className="welcome-text">
+            Read real English articles, tap any word to save its meaning and pronunciation, and
+            build your own vocabulary right in the text.
+          </p>
 
-        <button type="button" className="welcome-go" onClick={start}>
-          <span>Let’s go</span>
-          <SquiggleArrow />
-        </button>
+          <button type="button" className="welcome-go" onClick={start}>
+            <span>Let’s go</span>
+            <SquiggleArrow />
+          </button>
+        </div>
       </div>
     </div>
   );
